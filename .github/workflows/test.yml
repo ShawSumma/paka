@@ -7,5 +7,5 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
-      - run: ls
+      - uses: mxschmitt/action-tmate@v3
       - run: make -B bin/stage3
