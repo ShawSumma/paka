@@ -4,4 +4,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - run: make -B bin/stage3
+      - name: checkout repo
+        uses: actions/checkout@v2
+      - name: run makefile
+        run: make -B bin/stage3
