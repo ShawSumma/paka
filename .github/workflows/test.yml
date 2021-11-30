@@ -4,4 +4,4 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - run: make -Bj -C ${{ github.workspace }}
+      - run: make -B bin/stage3
