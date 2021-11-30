@@ -4,7 +4,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
-        uses: actions/checkout@v2
-      - name: run makefile
-        run: make -B bin/stage3
+      - uses: actions/checkout@v2
+        with:
+          submodules: minivm
+      - run: make -B bin/stage3
