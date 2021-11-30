@@ -9,5 +9,3 @@ jobs:
           submodules: true
       - run: make -B CC=cc CFLAGS+=-flto LFLAGS+=-flto OPT=-Ofast
       - uses: blacha/hyperfine-action@v1
-        with:
-          publish: true
