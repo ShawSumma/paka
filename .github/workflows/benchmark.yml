@@ -1,0 +1,13 @@
+name: Benchmark
+on: [push]
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - run: make -B CC=cc CFLAGS+=-flto LFLAGS+=-flto OPT=-Ofast
+      - uses: blacha/hyperfine-action@v1
+        with:
+          publish: true
