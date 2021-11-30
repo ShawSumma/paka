@@ -7,5 +7,4 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
-      - uses: mxschmitt/action-tmate@v3
-      - run: make -B bin/stage3
+      - run: make -B CC=cc CFLAGS+=-fsanitize=undefined LFLAGS+=-fsanitize=undefined OPT=-g3
