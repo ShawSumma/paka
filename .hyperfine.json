@@ -1,0 +1,6 @@
+[
+  {
+    "name": "Compile",
+    "command": "./bin/minivm bin/stage3 src/paka.paka -o out.bc"
+  }
+]
