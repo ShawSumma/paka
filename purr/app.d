@@ -238,7 +238,7 @@ Thunk cliReplHandler()
                 break;
             }
             Dynamic res = ctx.eval(code);
-            if (res.isNil)
+            if (!res.isNil)
             {
                 writeln(res);
             }
