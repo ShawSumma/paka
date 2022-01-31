@@ -46,7 +46,7 @@ all_primes = cb step times -> {
     cb 2
     cb 3
     next = n -> if (less n times) {
-        await primes cb (step * n) (step * n + step) 
+        primes cb (step * n) (step * n + step) 
         next (n + 1)
     }
     next 0

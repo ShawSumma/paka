@@ -5,7 +5,6 @@ import std.conv;
 import purr.dynamic;
 import purr.ast.ast;
 import ext.paka.built;
-import ext.paka.async;
 import ext.paka.parse.util;
 
 Node binaryFold(BinaryOp op, Node lhs, Node rhs)
@@ -143,12 +142,6 @@ UnaryOp parseUnaryOp(string[] ops)
     {
         return (Node rhs) {
             return new Form("!=", rhs, new Value(true));
-        };
-    }
-    else if (opName == "await")
-    {
-        return (Node rhs) {
-            return new Form("call", new Value(native!awaitOp), rhs);
         };
     }
     else if (opName == "-")

@@ -73,36 +73,6 @@ Dynamic libeval(Args args)
     return val;
 }
 
-// /// returns type of value as a string
-// Dynamic libtypeof(Args args)
-// {
-//     final switch (args[0].type)
-//     {
-//     case Dynamic.Type.nil:
-//         return dynamic("nil");
-//     case Dynamic.Type.log:
-//         return dynamic("logical");
-//     case Dynamic.Type.sml:
-//         return dynamic("number");
-//     case Dynamic.Type.sym:
-//         return dynamic("symbol");
-//     case Dynamic.Type.str:
-//         return dynamic("string");
-//     case Dynamic.Type.tup:
-//         return dynamic("tuple");
-//     case Dynamic.Type.arr:
-//         return dynamic("array");
-//     case Dynamic.Type.tab:
-//         return dynamic("table");
-//     case Dynamic.Type.fun:
-//         return dynamic("callable");
-//     case Dynamic.Type.pro:
-//         return dynamic("callable");
-//     case Dynamic.Type.thr:
-//         return dynamic("callable");
-//     }
-// }
-
 /// internal map function
 Dynamic syslibmap(Args args)
 {

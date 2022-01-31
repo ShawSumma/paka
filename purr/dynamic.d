@@ -10,7 +10,6 @@ import std.traits;
 import purr.io;
 import purr.bytecode;
 import purr.vm;
-import purr.async;
 import purr.data.map;
 import purr.data.rope;
 import purr.plugin.syms;
@@ -305,8 +304,6 @@ struct DynamicImpl
         tab,
         fun,
         pro,
-        thr,
-        run,
     }
 
     union Value
@@ -324,7 +321,6 @@ struct DynamicImpl
         }
 
         Formable fun;
-        size_t run;
     }
 
     private Type type = void;
@@ -341,13 +337,6 @@ pragma(inline, true):
     {
         Dynamic ret = dynamic(s);
         ret.type = Type.sym;
-        return ret;
-    }
-
-    static Dynamic thr(Dynamic f)
-    {
-        Dynamic ret = dynamic([f]);
-        ret.type = Type.thr;
         return ret;
     }
 
@@ -435,13 +424,11 @@ pragma(inline, true):
 
     string toString()
     {
-        forceResolve;
         return strFormat(this);
     }
 
     Dynamic opCall(Args args)
     {
-        forceResolve;
         switch (type)
         {
         case Type.fun:
@@ -454,11 +441,6 @@ pragma(inline, true):
             return arr[args[0].as!size_t];
         case Type.arr:
             return arr[args[0].as!size_t];
-        case Type.thr:
-            Dynamic ret = void;
-            ret.value.run = this.startAsyncCall(args);
-            ret.type = Type.run;
-            return ret;
         default:
             throw new Exception("error: not a function: " ~ this.to!string);
         }
@@ -466,7 +448,6 @@ pragma(inline, true):
 
     void opIndexAssign(Dynamic value, Dynamic key)
     {
-        forceResolve;
         switch (type)
         {
         case Type.tab:
@@ -485,7 +466,6 @@ pragma(inline, true):
 
     Dynamic opIndex(Dynamic other)
     {
-        forceResolve;
         switch (type)
         {
         case Type.tab:
@@ -501,13 +481,11 @@ pragma(inline, true):
 
     int opCmp(Dynamic other)
     {
-        forceResolve;
         return cmpDynamic(this, other);
     }
 
     int flatOpCmp(Dynamic other)
     {
-        forceResolve;
         Type t = type;
         switch (t)
         {
@@ -572,10 +550,6 @@ pragma(inline, true):
             return size_t.max - 2;
         case Type.pro:
             return size_t.max - 3;
-        case Type.thr:
-            return size_t.max - 4;
-        case Type.run:
-            return size_t.max - 5;
         }
     }
 
@@ -619,14 +593,11 @@ pragma(inline, true):
 
     bool opEquals(Dynamic other)
     {
-        forceResolve;
         return cmpDynamic(this, other) == 0;
     }
 
     Dynamic opBinary(string op)(Dynamic other)
     {
-        forceResolve;
-        other.forceResolve;
         static if (op != "~")
         {
             if (type == Type.sml && other.type == Type.sml)
@@ -654,13 +625,11 @@ pragma(inline, true):
 
     Dynamic opUnary(string op)()
     {
-        forceResolve;
         return dynamic(mixin(op ~ "as!double"));
     }
 
     bool log()
     {
-        forceResolve;
         version (safe)
         {
             if (type != Type.log)
@@ -673,7 +642,6 @@ pragma(inline, true):
 
     string str()
     {
-        forceResolve;
         version (safe)
         {
             if (type != Type.str)
@@ -686,7 +654,6 @@ pragma(inline, true):
 
     Array arr()
     {
-        forceResolve;
         version (safe)
         {
             if (!isArray)
@@ -699,7 +666,6 @@ pragma(inline, true):
 
     Table tab()
     {
-        forceResolve;
         version (safe)
         {
             if (type != Type.tab)
@@ -712,7 +678,6 @@ pragma(inline, true):
 
     string* strPtr()
     {
-        forceResolve;
         version (safe)
         {
             if (type != Type.str)
@@ -725,7 +690,6 @@ pragma(inline, true):
 
     Value.Formable fun()
     {
-        forceResolve;
         version (safe)
         {
             if (type != Type.fun && type != Type.pro)
@@ -738,7 +702,6 @@ pragma(inline, true):
 
     T as(T)() if (isIntegral!T)
     {
-        forceResolve;
         if (type == Type.sml)
         {
             return cast(T) value.sml;
@@ -751,7 +714,6 @@ pragma(inline, true):
 
     T as(T)() if (isFloatingPoint!T)
     {
-        forceResolve;
         if (type == Type.sml)
         {
             return cast(T) value.sml;
@@ -764,71 +726,36 @@ pragma(inline, true):
 
     bool isNil()
     {
-        forceResolve;
         return type == Type.nil;
     }
 
     bool isString()
     {
-        forceResolve;
         return type == Type.str;
     }
 
     bool isNumber()
     {
-        forceResolve;
         return type == Type.sml;
     }
 
     bool isArray()
     {
-        forceResolve;
         return type == Type.arr || type == Type.tup;
     }
 
     bool isTable()
     {
-        forceResolve;
         return type == Type.tab;
     }
 
     bool isTruthy()
     {
-        forceResolve;
         return type != Type.nil && (type != Type.log || value.log);
-    }
-
-    Dynamic async(bool set)()
-    {
-        forceResolve;
-        static if (set)
-        {
-            if (type == Type.thr)
-            {
-                return this;
-            }
-            Dynamic next = Dynamic.thr(this);
-            next.type = Type.thr;
-            return next;
-        }
-        else
-        {
-            return value.arr[0];
-        }
-    }
-
-    void forceResolve()
-    {
-        while (type == Dynamic.Type.run)
-        {
-            set(value.run.stopAsyncCall);
-        }
     }
 
     static private int cmpDynamic(Dynamic a, Dynamic b)
     {
-        a.forceResolve;
-        b.forceResolve;
     redo:
         if (b.type != a.type)
         {
@@ -923,16 +850,11 @@ pragma(inline, true):
             return cmp(a.value.fun.fun, b.value.fun.fun);
         case Type.pro:
             return cmpFunction(a.value.fun.pro, b.value.fun.pro);
-        case Type.thr:
-            a.type = cast(Type) a.data;
-            b.type = cast(Type) b.data;
-            goto redo;
         }
     }
 
     private static string strFormat(Dynamic dyn)
     {
-        dyn.forceResolve;
         foreach (i, v; before)
         {
             if (dyn is v)
@@ -996,8 +918,6 @@ pragma(inline, true):
             return (*dyn.value.fun.fun).to!string;
         case Type.pro:
             return dyn.fun.pro.to!string;
-        case Type.thr:
-            return strFormat(dyn.async!false) ~ " async";
         }
     }
 

@@ -40,3 +40,4 @@ gwion-benchmark
 profile.raw
 profile.data
 paka
+*.core

@@ -15,7 +15,6 @@ import purr.ast.ast;
 import purr.dynamic;
 import purr.parse;
 import purr.vm;
-import purr.async;
 import purr.inter;
 import purr.srcloc;
 import purr.ir.repr;
@@ -54,10 +53,6 @@ Dynamic evalImpl(Walker)(size_t ctx, SrcLoc code, Args args)
         OpcodePrinter oppr = new OpcodePrinter;
         oppr.walk(func);
         writeln(oppr.ret);
-    }
-    scope(success)
-    {
-        stopAllAsyncCalls;
     }
     return run(func, args, ctx.exportLocalsToBaseFormback(func));
 }

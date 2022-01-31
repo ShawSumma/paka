@@ -214,20 +214,6 @@ redoSame:
             stack--;
             Dynamic arr = *stack;
             *stack = arr[ind];
-            // switch (arr.type)
-            // {
-            // case Dynamic.Type.tup:
-            //     *stack = arr.arr[ind.as!size_t];
-            //     break;
-            // case Dynamic.Type.arr:
-            //     *stack = arr.arr[ind.as!size_t];
-            //     break;
-            // case Dynamic.Type.tab:
-            //     *stack = (arr.tab)[ind];
-            //     break;
-            // default:
-            //     throw new Exception("error: cannot index a " ~ arr.type.to!string);
-            // }
             break;
         case Opcode.opindexc:
             ushort constIndex = instrs.eat!ushort(index);

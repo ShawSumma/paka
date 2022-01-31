@@ -137,12 +137,6 @@ Node readPostExtendImpl(TokenArray tokens, Node last)
     {
         ret = tokens.readPostCallExtend(last);
     }
-    else if (tokens.first.isKeyword("await"))
-    {
-        tokens.nextIs(Token.Type.keyword, "await");
-        UnaryOp unary = ["await"].parseUnaryOp;
-        ret = unary(last);
-    }
     else if (tokens.first.isOperator("."))
     {
         tokens.nextIs(Token.Type.operator, ".");
