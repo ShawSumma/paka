@@ -47,7 +47,6 @@ shared size_t tableVersion;
 
 final class TableImpl
 {
-    size_t ver = void;
     Mapping table = emptyMapping;
     alias table this;
 
@@ -59,19 +58,16 @@ pragma(inline, true):
 
     this()
     {
-        ver = core.atomic.atomicOp!"+="(tableVersion, 1);
         table = emptyMapping;
     }
 
     this(typeof(table) t)
     {
-        ver = core.atomic.atomicOp!"+="(tableVersion, 1);
         table = t;
     }
 
     this(typeof(table) t, Table m)
     {
-        ver = core.atomic.atomicOp!"+="(tableVersion, 1);
         table = t;
     }
 
@@ -86,7 +82,6 @@ pragma(inline, true):
 
     void rawSet(Dynamic key, Dynamic value)
     {
-        ver = core.atomic.atomicOp!"+="(tableVersion, 1);
         table[key] = value;
     }
 
@@ -323,7 +318,7 @@ struct DynamicImpl
         Formable fun;
     }
 
-    private Type type = void;
+    Type type = void;
     uint data = void;
     Value value = void;
 
@@ -583,7 +578,7 @@ pragma(inline, true):
         case Type.arr:
             return cast(void*) value.arr == cast(void*) other.value.arr;
         case Type.tab:
-            return value.tab.ver == other.value.tab.ver;
+            return value.tab is other.value.tab;
         case Type.fun:
             return cast(void*) value.fun.fun == cast(void*) other.value.fun.fun;
         case Type.pro:

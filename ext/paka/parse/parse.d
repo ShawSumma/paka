@@ -112,9 +112,8 @@ void stripNewlines(TokenArray tokens)
 Node readPostCallExtend(TokenArray tokens, Node last)
 {
     Node[][] args = tokens.readOpen!"()";
-    while (tokens.first.isOperator(":"))
+    while (tokens.first.isOpen("{") || tokens.first.isOperator("->"))
     {
-        tokens.nextIs(Token.Type.operator, ":");
         args[$ - 1] ~= new Form("fun", [new Form("args"), tokens.readBlock]);
     }
     foreach (argList; args)

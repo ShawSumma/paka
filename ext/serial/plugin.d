@@ -19,5 +19,11 @@ Plugin thisPlugin()
     plugin.libs ~= FunctionPair!serialreads("_serial_reads");
     plugin.libs ~= FunctionPair!serialfreeze("_serial_freeze");
     plugin.libs ~= FunctionPair!serialthaw("_serial_thaw");
+    Pair[] libs;
+    libs ~= FunctionPair!serialdumps("dumps");
+    libs ~= FunctionPair!serialreads("reads");
+    libs ~= FunctionPair!serialfreeze("freeze");
+    libs ~= FunctionPair!serialthaw("thaw");
+    plugin.libs.addLib("serial", libs);
     return plugin;
 }
